@@ -11,5 +11,5 @@ const ctrl = require('./controller.js')
 
 
 
-app.post('api/onlydevs/', ctrl.createPost)
-app.listen(5500, () => console.log("Server running on 5500"));
+app.post('/api/onlydevs/', ctrl.createPost)
+app.listen(4500, () => console.log("Server running on 4500"));
