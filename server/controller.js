@@ -15,10 +15,11 @@ module.exports = {
     createPost: (req, res) => {
         
 
-        const {status} = req.body 
+        const {newPost: status} = req.body 
         console.log(req.body)
         let newPost = {status}
         posts.push(newPost)
+        console.log(posts)
 
 
     res.status(200).send(posts)
