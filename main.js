@@ -1,3 +1,6 @@
+// const { default: axios } = require("axios");
+// const { deletePost } = require("./server/controller");
+
 var settingsmenu = document.querySelector(".settings-menu");
 var darkBtn = document.getElementById("dark-btn");
 
@@ -5,26 +8,35 @@ let post = document.querySelector("#textArea");
 
 function submitHandler(e) {
   e.preventDefault();
-  console.log("hit");
 
   let bodyObject = {
     newPost: post.value,
   };
   console.log(post.value);
   createPost(bodyObject);
-  post.value = ""
+  post.value = "";
 }
+let addPost = document.querySelector(".new");
+
+function removeAllChildNodes(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
 
 const createPost = (body) =>
   axios
-    .post("http://localhost:4500/api/onlydevs", body)
-    .then((res) => {
-      createPostCard(res.data[0]);
+  .post("http://localhost:4500/api/onlydevs", body)
+  .then((res) => {
+      removeAllChildNodes(addPost)
+      res.data.map((post) => {
+          createPostCard(post);
+      });
 
     })
 
-    .catch(errCallback);
-
+    
 function createPostCard(post) {
   console.log(post);
   const postCard = document.createElement("div");
@@ -36,14 +48,14 @@ function createPostCard(post) {
           <img src="images/profile-pic.jpg">
           <div>
               <p>Wyatt Enourato</p>
-              <span>December 26 2021, 5:59pm</span>
+              <span>January 4 2022, 5:59pm</span>
           </div>
       </div>
       <a href="#"> <i class="fas fa-ellipsis-v"></i></small></a>
 
   </div>
 
-  <p class="post-text">${post.status}</p>
+  <p class="post-text">${post.content}</p>
   
 
   <div class="post-row">
@@ -51,6 +63,7 @@ function createPostCard(post) {
           <div><img src="images/like-blue.png"> 3</div>
           <div><img src="images/comments.png"> 0</div>
           <div><img src="images/share.png"> 1</div>
+          <button id=${post.index} class="delete">X</button>
 
       </div>
       <div class="post-profile-icons">
@@ -62,35 +75,35 @@ function createPostCard(post) {
   
 </div>`;
 
-  let addPost = document.querySelector(".asdf");
-  addPost.appendChild(postCard);
+addPost.appendChild(postCard);
+
+const deleteBtns = document.querySelectorAll(".delete");
+for (let i = 0; i < deleteBtns.length; i++) {
+    deleteBtns[i].addEventListener("click", deletePost);
+}
 }
 
-// const postCallback = ({ data: post }) => {
-//     displayPost(post)
-// }
 const errCallback = (err) => console.log(err);
 
-// const getPost = () => {
-
-//    axios.get("http://localhost:4500/api/onlydevs")
-//    .then(postCallback)
-// }
-
-// const settingsmenu = document.querySelector('.settings-menu');
-// const darkBtn = document.getElementById("dark-btn");
-
-// function createPost(){
-//     let postContent = document.getElementById("textArea").value
-//     axios.post("http://localhost:4500/api/onlydevs", {
-//         postContent
-//     })
-//     .then(res => {
-//         alert('Successfully Posted!')
-//     })
-// }
-
 const postBtn = document.getElementById("post-btn");
+
+const deletePost = (event) => {
+  console.log(event.target.id);
+
+  const id = event.target.id;
+  axios
+    .delete(`http://localhost:4500/api/onlydevs/${id}`)
+    .then((res) => {
+        removeAllChildNodes(addPost)
+      res.data.map((post) => {
+        createPostCard(post);
+      });
+    })
+
+    .catch((err) => console.log(err));
+};
+
+
 
 postBtn.addEventListener("click", submitHandler);
 
